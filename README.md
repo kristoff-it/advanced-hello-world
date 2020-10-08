@@ -1,4 +1,4 @@
-# advanced-hello-world
+# Advanced Hello World in Zig
 Become and EXTREME Zig programmer!
 
 
@@ -15,4 +15,4 @@ If you want to run the code locally, there's some work you need to do:
 5. Change the Twitch channel name in `main.zig`, set the oauth token as an env variable or change the corresponding line in the source code.
 6. Congratulations, now everytime you log something, it also gets sent to both Discord and Twitch!
 
-Uncomment the panic handler to sent do Twitch panic messages.
+Uncomment the panic handler to send to Twitch panic messages.
