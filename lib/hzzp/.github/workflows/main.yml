@@ -1,0 +1,22 @@
+name: Zig Build
+
+on:
+  push:
+    paths:
+    - '**.zig'
+  pull_request:
+    paths:
+    - '**.zig'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - uses: goto-bus-stop/setup-zig@v1
+      with:
+        version: master
+    - name: Build
+      run: zig build test
