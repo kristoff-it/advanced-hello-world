@@ -62,6 +62,42 @@ pub const DiscordLogger = struct {
         _ = try req.expectSuccessStatus();
     }
 
+    // Created because comptime fmt hits compiler TODO when put in a panic handler
+    pub fn sendSimpleMessage(self: DiscordLogger, channel_id: []const u8, msg: []const u8) !void {
+        const discord_token = std.os.getenv("DISCORD_TOKEN") orelse @panic("no token!");
+        var path: [0x100]u8 = undefined;
+        var req = try request.Https.init(.{
+            .allocator = self.allocator,
+            .pem = @embedFile("./certs/discord-com-chain.pem"),
+            .host = "discord.com",
+            .method = "POST",
+            .path = try std.fmt.bufPrint(&path, "/api/v6/channels/{}/messages", .{channel_id}),
+        });
+        defer req.deinit();
+
+        try req.client.writeHeaderValue("Accept", "application/json");
+        try req.client.writeHeaderValue("Content-Type", "application/json");
+        try req.client.writeHeaderValue("Authorization", discord_token);
+        try req.printSend(
+            \\{{
+            \\  "content": "",
+            \\  "tts": false,
+            \\  "embed": {{
+            \\    "title": "{0}",
+            \\    "description": "{1}",
+            \\    "color": {2}
+            \\  }}
+            \\}}
+        ,
+            .{
+                "Important message from apanicking Zig application!",
+                msg,
+                @enumToInt(HexColor.blue),
+            },
+        );
+
+        _ = try req.expectSuccessStatus();
+    }
     const HexColor = enum(u24) {
         black = 0,
         aqua = 0x1ABC9C,

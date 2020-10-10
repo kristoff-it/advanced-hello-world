@@ -16,3 +16,6 @@ If you want to run the code locally, there's some work you need to do:
 6. Congratulations, now everytime you log something, it also gets sent to both Discord and Twitch!
 
 Uncomment the panic handler to send to Twitch panic messages.
+
+## Credits
+You can thank https://github.com/fengb and https://github.com/xackus for helping me concote this abomination.

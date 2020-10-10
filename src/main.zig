@@ -10,6 +10,26 @@ const discord_channel_id = "757722210742829059";
 pub var twitch: ?TwitchLogger = null;
 const twitch_channel = "kristoff_it";
 
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+
+    // Discord
+    {
+        const auth = std.os.getenv("DISCORD_TOKEN") orelse @panic("missing discord auth");
+        discord = DiscordLogger.init(auth, &gpa.allocator);
+    }
+
+    // Twitch
+    {
+        const auth = std.os.getenv("TWITCH_OAUTH") orelse @panic("missing twitch auth");
+        const nick = "kristoff_it";
+        twitch = TwitchLogger.init(auth, nick, &gpa.allocator);
+    }
+
+    std.log.warn("Shields at 80% captain!", .{});
+}
+
 // Define root.log to override the std implementation
 pub fn log(
     comptime level: std.log.Level,
@@ -41,27 +61,7 @@ pub fn log(
 // pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace) noreturn {
 //     std.debug.print("{}\n", .{msg});
 //     twitch.?.sendSimpleMessage(twitch_channel, msg) catch unreachable;
+//     discord.?.sendSimpleMessage(discord_channel_id, msg) catch unreachable;
 //     @breakpoint();
 //     unreachable;
 // }
-
-pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-
-    // Discord
-    {
-        const auth = std.os.getenv("DISCORD_TOKEN") orelse @panic("missing discord auth");
-        discord = DiscordLogger.init(auth, &gpa.allocator);
-    }
-
-    // Twitch
-    {
-        const auth = std.os.getenv("TWITCH_OAUTH") orelse @panic("missing twitch auth");
-        const nick = "kristoff_it";
-        twitch = TwitchLogger.init(auth, nick, &gpa.allocator);
-    }
-    // @panic("Hi Twitch this is a Panic!");
-    std.log.warn("Flux capacitor is starting to overheat", .{});
-    std.log.info("Just a simple informational log message", .{}); // Won't be printed as log_level is .warn
-}

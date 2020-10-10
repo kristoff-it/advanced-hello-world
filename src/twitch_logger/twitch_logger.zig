@@ -12,6 +12,7 @@ pub const TwitchLogger = struct {
         return .{ .oauth = oauth, .nick = nick, .allocator = allocator };
     }
 
+    // Created because comptime fmt hits compiler TODO when put in a panic handler
     pub fn sendSimpleMessage(self: TwitchLogger, channel: []const u8, msg: []const u8) !void {
         const con = try net.tcpConnectToHost(self.allocator, "irc.chat.twitch.tv", 6667);
         defer con.close();
